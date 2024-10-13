@@ -2,17 +2,19 @@
 {% load i18n %}
 
 {% block content %}
-<div class="container m-auto">
+<div class="container m-auto" id="parent">
     <div class="w-full flex flex-col justify-center items-center">
         <h1 id="edit_profile_header" class="mt-10 text-xl">Welcome back, {{ user.full_name }}!</h1>
         <div class="mt-3 flex flex-col w-2/5 bg-white border border-gray-200 shadow-sm rounded-xl p-4 md:p-5 dark:bg-neutral-900 dark:border-neutral-700 dark:text-neutral-400">
             <form
-                id="edit_profile_form"
+                id="profile-page"
                 hx-post="{% url 'home' %}"
                 hx-trigger="submit"
-                hx-swap="multi:#edit_profile_form:outerHTML,h1:outerHTML"
-                hx-ext="multi"
+                hx-swap="multi:#edit_profile_header:innerHTML,#username:innerHTML" 
             >
+            <!--Error fixed here, The error was that #edit_profile_form doesn't exist and you are using outerHTML instead of innerHTML for dynamic rendering-->
+
+            {% csrf_token %} <!-- Should never forget to put csrf_token when dealing with django's form -->
                 <div class="mt-3 max-w">
                     <label for="input-label" class="block text-sm font-medium mb-2 dark:text-white">Email</label>
                     <input
@@ -55,7 +57,59 @@
                 </div>
             </form>
         </div>
+        <!-- Modal Trigger -->
+        <button id="openModal" class="mt-10">Invite User</button>
+
     </div>
+
+    <!-- Custom Modal -->
+    <div id="modal" class="modal fixed inset-0 border-gray-800 bg-opacity-50 justify-center items-center ">
+        <div class="bg-white rounded-lg p-6 mx-4 md:mx-0 md:max-w-md border-gray-200">
+            <h2 class="text-lg font-semibold mb-4">Invite User</h2>
+            <form method="post" action="{% url 'invite_user' %}">
+                {% csrf_token %}
+                <h2 class="text-sm font-medium mb-2">Enter the email address of the user you would like to invite</h2>
+                <div class="mb-4">
+                    <input type="email" id="email" name="email" value="{{ inviteForm.email.value }}" 
+                           class="mt-1 block w-full border-2 border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-500" 
+                           required>
+                </div>
+                <div class="flex justify-end">
+                    <button type="button" id="closeModal" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button type="submit" id="submitBtn" class="ml-2 px-4 py-2 bg-blue-500 text-black rounded hover:bg-blue-600">Submit</button>
+                </div>
+            </form>            
+        </div>
+    </div>
+    
 <div>
+    <!--External script-->
+    <script>
+
+        const modal = document.getElementById('modal');
+        const openModalBtn = document.getElementById('openModal');
+        const closeModalBtn = document.getElementById('closeModal');
+        const submitBtn = document.getElementById('submitBtn');
+        const logout = document.getElementById('logout')
+        
+        openModalBtn.addEventListener('click', () => {
+            modal.classList.add('active');
+            
+        });
+    
+        closeModalBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        submitBtn.addEventListener('click', () => {
+            location.reload();
+        });
+
+        logout.addEventListener('click', () => {
+            location.reload();
+        });
+    </script>
+
 
 {% endblock content %}
+

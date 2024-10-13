@@ -3,10 +3,8 @@ from django.shortcuts import render, redirect
 from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.utils.translation import gettext as _
-
-
 from accounts_app.forms import SignInForm
-
+from accounts_app.forms import InviteUserForm
 
 def sign_in(request: HttpRequest) -> HttpResponse:
     if request.method == "GET":
@@ -14,7 +12,8 @@ def sign_in(request: HttpRequest) -> HttpResponse:
             return redirect("home")
 
         form = SignInForm()
-        return render(request, "accounts_app/sign_in.html", {"form": form})
+        inviteForm = InviteUserForm() #I've added this form 
+        return render(request, "accounts_app/sign_in.html", {"form": form, "inviteForm":inviteForm})
 
     elif request.method == "POST":
         form = SignInForm(request.POST)

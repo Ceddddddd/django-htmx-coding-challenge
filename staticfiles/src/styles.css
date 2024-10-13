@@ -1657,3 +1657,7 @@ img.dragging {
     padding: 1.25rem;
   }
 }
+
+/* Modal form */
+#modal { display: none; }
+#modal.active { display: flex; }
